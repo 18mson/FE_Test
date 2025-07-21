@@ -38,6 +38,7 @@ const Header: React.FC = () => {
                   </button>
                   <button
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={logout}
                   >
                     Logout
                   </button>
@@ -47,7 +48,6 @@ const Header: React.FC = () => {
           </div>
         </button>
         <button 
-          onClick={logout}
           className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
         >
           <Menu className="h-5 w-5 text-gray-600" />
