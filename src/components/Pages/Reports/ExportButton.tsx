@@ -136,7 +136,6 @@ const getFilteredData = () => {
       title.textContent = 'Laporan Lalin';
       head.appendChild(title);
       
-      // Create and add styles
       const style = doc.createElement('style');
       style.textContent = `
         body { font-family: Arial, sans-serif; margin: 20px; }
@@ -155,15 +154,10 @@ const getFilteredData = () => {
       `;
       head.appendChild(style);
       
-      // Create body element
       const body = doc.createElement('body');
-      
-      // Create header
       const h1 = doc.createElement('h1');
       h1.textContent = 'Laporan Lalin Per Hari';
       body.appendChild(h1);
-      
-      // Create info section
       const infoDiv = doc.createElement('div');
       infoDiv.className = 'info';
       
@@ -180,13 +174,9 @@ const getFilteredData = () => {
       filterP.appendChild(filterBold);
       filterP.appendChild(doc.createTextNode(paymentMethod));
       infoDiv.appendChild(filterP);
-      
       body.appendChild(infoDiv);
       
-      // Create table
       const table = doc.createElement('table');
-      
-      // Create table header
       const thead = doc.createElement('thead');
       const headerRow = doc.createElement('tr');
       const headers = ['No.', 'Ruas', 'Gerbang', 'Gardu', 'Hari', 'Tanggal', 'Metode Pembayaran', 'Gol I', 'Gol II', 'Gol III', 'Gol IV', 'Gol V', 'Total Lalin'];
@@ -199,10 +189,8 @@ const getFilteredData = () => {
       thead.appendChild(headerRow);
       table.appendChild(thead);
       
-      // Create table body
       const tbody = doc.createElement('tbody');
       
-      // Add data rows
       filteredData.forEach((item, index) => {
         const row = doc.createElement('tr');
         const cells = [
@@ -229,7 +217,6 @@ const getFilteredData = () => {
         tbody.appendChild(row);
       });
       
-      // Add summary rows
       const summaryRows = [
         { label: 'Total Lalin Ruas 1', gol1: '1791', gol2: '7698', gol3: '7698', gol4: '7698', gol5: '7698', total: '6570', className: 'summary' },
         { label: 'Total Lalin Ruas 2', gol1: '4779', gol2: '7698', gol3: '7698', gol4: '7698', gol5: '7698', total: '6570', className: 'summary' },
@@ -252,6 +239,22 @@ const getFilteredData = () => {
         const gol2Cell = doc.createElement('td');
         gol2Cell.textContent = summaryRow.gol2;
         row.appendChild(gol2Cell);
+
+        const gol3Cell = doc.createElement('td');
+        gol3Cell.textContent = summaryRow.gol3;
+        row.appendChild(gol3Cell);
+
+        const gol4Cell = doc.createElement('td');
+        gol4Cell.textContent = summaryRow.gol4;
+        row.appendChild(gol4Cell);
+
+        const gol5Cell = doc.createElement('td');
+        gol5Cell.textContent = summaryRow.gol5;
+        row.appendChild(gol5Cell);
+
+        const totalCell = doc.createElement('td');
+        totalCell.textContent = summaryRow.total;
+        row.appendChild(totalCell);
         
         tbody.appendChild(row);
       });
@@ -259,7 +262,6 @@ const getFilteredData = () => {
       table.appendChild(tbody);
       body.appendChild(table);
       
-      // Append to document
       doc.documentElement.appendChild(head);
       doc.documentElement.appendChild(body);
       
