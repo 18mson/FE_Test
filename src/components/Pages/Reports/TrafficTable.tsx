@@ -51,7 +51,11 @@ const TrafficReportTable: React.FC<TrafficReportTableProps> = ({
       return item.eFlo || 0;
     } else if (activeFilter === 'etoll-tunai-flo') {
       return item.Tunai + item.eFlo + item.eMandiri + item.eBri + item.eBni + item.eBca + item.eNobu + item.eDKI + item.eMega || 0;
-    } return 0;
+    } else if (activeFilter === 'ktp') {
+      return item.DinasOpr + item.DinasMitra + item.DinasKary || 0;
+    } else {
+      return 0;
+    }
   }
   
 
