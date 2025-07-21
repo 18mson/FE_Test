@@ -135,7 +135,11 @@ const getFilteredData = () => {
       return item.eFlo || 0;
     } else if (activeFilter === 'etoll-tunai-flo') {
       return item.Tunai + item.eFlo + item.eMandiri + item.eBri + item.eBni + item.eBca + item.eNobu + item.eDKI + item.eMega || 0;
-    } return 0;
+    } else if (activeFilter === 'ktp') {
+      return item.DinasOpr + item.DinasMitra + item.DinasKary || 0;
+    } else {
+      return 0;
+    }
   }
 
   const exportToPDF = () => {
@@ -225,7 +229,8 @@ const getFilteredData = () => {
       </tr>
     `;
 
-    const html = `
+    const doc = document.createElement('div');
+    doc.innerHTML = `
       <html>
         <head>
           <title>Laporan Lalin Per Hari</title>
@@ -269,9 +274,13 @@ const getFilteredData = () => {
       </html>
     `;
 
-    printWindow.document.write(html);
-    printWindow.document.close();
-    printWindow.print();
+    if (printWindow) {
+      printWindow.document.body.innerHTML = doc.innerHTML;
+      printWindow.print();
+      setTimeout(() => {
+        printWindow.close();
+      }, 100);
+    }
   };
 
 
