@@ -1,5 +1,12 @@
 # React + Vite
 
+Untuk menjalankannya:
+- clone terlebih dahulu projectnya, 
+- lalu masuk ke direktori projectnya cd Fe_Test
+- install dependensi nya dengan npm install
+- untuk menjalankan secara local npm run dev
+- maka project bisa di akses melalui http://localhost:5173/
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
