@@ -4,6 +4,8 @@ import { deleteGate, getGates } from '../../../services/api';
 import { Gate } from '../../../types';
 import GateModal from './GateModal';
 import TablePagination from '../../common/TablePagination';
+import PopupConfirmation from '../../common/PopupConfirmation';
+import Button from '../../common/Button';
 
 const GateMasterDataPage: React.FC = () => {
   const [gates, setGates] = useState<Gate[]>([]);
@@ -15,6 +17,8 @@ const GateMasterDataPage: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedGate, setSelectedGate] = useState<Gate | null>(null);
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchGates();
@@ -29,7 +33,6 @@ const GateMasterDataPage: React.FC = () => {
         NamaGerbang: searchTerm
       });
       setGates(data.data.rows.rows);
-      console.log(data.data.rows.rows);
       
       setTotal(data.data.count);
     } catch (error) {
@@ -57,16 +60,21 @@ const GateMasterDataPage: React.FC = () => {
     setModalOpen(true);
   };
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this gate?')) {
-      try {
-        await deleteGate(id);
-        fetchGates();
-      } catch (error) {
-        console.error('Error deleting gate:', error);
-      }
-    }
+  const handleDelete = (gate: Gate) => {
+    setSelectedGate(gate);
+    setConfirmationOpen(true);
   };
+
+  const handleConfirmation = async () => {
+      try {
+        await deleteGate(selectedGate!.id, selectedGate!.IdCabang);
+        fetchGates();
+        setConfirmationOpen(false);
+      } catch (error) {
+        setError(error instanceof Error ? error.message : 'An error occurred while deleting the gate.');
+      }
+  };
+  
 
   const handleModalSave = () => {
     setModalOpen(false);
@@ -78,11 +86,9 @@ const GateMasterDataPage: React.FC = () => {
   return (
     <div className="p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Gate Master Data</h1>
-        <p className="text-gray-600">Manage gate information and configurations</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Master Data Gerbang</h1>
       </div>
 
-      {/* Search and Actions */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
         <div className="flex flex-col sm:flex-row gap-4 justify-between">
           <div className="flex-1 max-w-md">
@@ -95,25 +101,26 @@ const GateMasterDataPage: React.FC = () => {
                 type="text"
                 id="search"
                 className="pl-10 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Search gates..."
+                placeholder="Cari Gerbang ..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
           <div className="flex items-end">
-            <button
+            <Button
+              variant="primary"
               onClick={handleCreate}
-              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+              className="flex items-center"
+              size="lg"
             >
               <Plus className="h-4 w-4 mr-2" />
-              Add Gate
-            </button>
+              Tambah Gerbang
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Data Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900">Gates</h3>
@@ -149,7 +156,7 @@ const GateMasterDataPage: React.FC = () => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {gates.map((gate, index) => (
-                    <tr key={gate.id} className="hover:bg-gray-50">
+                    <tr key={index} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {((currentPage - 1) * itemsPerPage) + index + 1}
                       </td>
@@ -163,21 +170,21 @@ const GateMasterDataPage: React.FC = () => {
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() => handleView(gate)}
-                            className="text-gray-600 hover:text-gray-900"
+                            className="text-gray-600 hover:text-gray-900 cursor-pointer"
                             title="View"
                           >
                             <Eye className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleEdit(gate)}
-                            className="text-blue-600 hover:text-blue-900"
+                            className="text-blue-600 hover:text-blue-900 cursor-pointer"
                             title="Edit"
                           >
                             <Edit className="h-4 w-4" />
                           </button>
                           <button
-                            onClick={() => handleDelete(gate.id)}
-                            className="text-red-600 hover:text-red-900"
+                            onClick={() => handleDelete(gate)}
+                            className="text-red-600 hover:text-red-900 cursor-pointer"
                             title="Delete"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -207,6 +214,17 @@ const GateMasterDataPage: React.FC = () => {
         onSave={handleModalSave}
         gate={selectedGate}
         mode={modalMode}
+      />
+
+      <PopupConfirmation
+        isOpen={confirmationOpen}
+        onConfirm={handleConfirmation}
+        onCancel={() => setConfirmationOpen(false)}
+        Confirmation="Konfirmasi Hapus"
+        message="Apakah Anda yakin ingin menghapus data ini?"
+        confirmButtonText="Ya"
+        cancelButtonText="Tidak"
+        errorMessage={error}
       />
     </div>
   );

@@ -101,7 +101,7 @@ const DashboardPage: React.FC = () => {
     };
 
     fetchAndProcessData();
-  }, [selectedDate]);
+  }, []);
 
   const handleFilter = () => {
     const fetchAndProcessData = async () => {

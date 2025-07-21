@@ -23,22 +23,59 @@ const ExportButton: React.FC<ExportButtonProps> = ({ data, activeFilter, selecte
     return methodMap[activeFilter] || 'E-Toll+Tunai+Flo';
   };
 
-  const getFilteredData = () => {
+const getFilteredData = () => {
+  if (!data || data.length === 0) return [];
+
+  return data.map(item => {
+    let total = 0;
+
     if (activeFilter === 'keseluruhan') {
-      return data;
+      total =
+        item.Tunai +
+        item.DinasOpr +
+        item.DinasMitra +
+        item.DinasKary +
+        item.eFlo +
+        item.eMandiri +
+        item.eBri +
+        item.eBni +
+        item.eBca +
+        item.eNobu +
+        item.eDKI +
+        item.eMega || 0;
+    } else if (activeFilter === 'tunai') {
+      total = item.Tunai || 0;
+    } else if (activeFilter === 'etoll') {
+      total =
+        item.eMandiri +
+        item.eBri +
+        item.eBni +
+        item.eBca +
+        item.eNobu +
+        item.eDKI +
+        item.eMega || 0;
+    } else if (activeFilter === 'flo') {
+      total = item.eFlo || 0;
+    } else if (activeFilter === 'etoll-tunai-flo') {
+      total =
+        item.Tunai +
+        item.eFlo +
+        item.eMandiri +
+        item.eBri +
+        item.eBni +
+        item.eBca +
+        item.eNobu +
+        item.eDKI +
+        item.eMega || 0;
     }
-    
-    const paymentTypeMap: { [key: string]: string[] } = {
-      'tunai': ['Cash'],
-      'etoll': ['E-Toll'],
-      'flo': ['Flo'],
-      'ktp': ['KTP'],
-      'etoll-tunai-flo': ['E-Toll', 'Cash', 'Flo']
+
+    return {
+      ...item,
+      TotalByFilter: total,
     };
-    
-    const allowedTypes = paymentTypeMap[activeFilter] || [];
-    return data.filter(item => allowedTypes.includes(item.paymentType));
-  };
+  });
+};
+
 
   const exportToExcel = () => {
     const filteredData = getFilteredData();
@@ -61,14 +98,12 @@ const ExportButton: React.FC<ExportButtonProps> = ({ data, activeFilter, selecte
       headers.join(','),
       ...filteredData.map((item, index) => [
         index + 1,
-        `Ruas ${item.shift}`,
-        item.gateName.replace('Gate ', 'Gerbang '),
+        `Ruas ${item.IdCabang}`,
+        item.IdGerbang,
         `0${index + 1}`,
         ['Kamis', 'Rabu', 'Selasa', 'Senin', 'Minggu', 'Sabtu'][index % 6],
-        new Date(item.date).toLocaleDateString('id-ID'),
+        new Date(item.Tanggal).toLocaleDateString('id-ID'),
         paymentMethod,
-        Math.floor(item.totalVehicles * 0.6),
-        Math.floor(item.totalVehicles * 0.4)
       ].join(','))
     ].join('\n');
 
@@ -90,18 +125,15 @@ const ExportButton: React.FC<ExportButtonProps> = ({ data, activeFilter, selecte
     const filteredData = getFilteredData();
     const paymentMethod = getPaymentMethodDisplay();
     
-    // Create new window for PDF
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       const doc = printWindow.document;
       
-      // Create document structure using DOM manipulation
       doc.documentElement.innerHTML = '';
       
-      // Create head element
       const head = doc.createElement('head');
       const title = doc.createElement('title');
-      title.textContent = 'Laporan Lalin Per Hari';
+      title.textContent = 'Laporan Lalin';
       head.appendChild(title);
       
       // Create and add styles
@@ -157,7 +189,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({ data, activeFilter, selecte
       // Create table header
       const thead = doc.createElement('thead');
       const headerRow = doc.createElement('tr');
-      const headers = ['No.', 'Ruas', 'Gerbang', 'Gardu', 'Hari', 'Tanggal', 'Metode Pembayaran', 'Gol I', 'Gol II'];
+      const headers = ['No.', 'Ruas', 'Gerbang', 'Gardu', 'Hari', 'Tanggal', 'Metode Pembayaran', 'Gol I', 'Gol II', 'Gol III', 'Gol IV', 'Gol V', 'Total Lalin'];
       
       headers.forEach(headerText => {
         const th = doc.createElement('th');
@@ -175,14 +207,18 @@ const ExportButton: React.FC<ExportButtonProps> = ({ data, activeFilter, selecte
         const row = doc.createElement('tr');
         const cells = [
           index + 1,
-          `Ruas ${item.shift}`,
-          item.gateName.replace('Gate ', 'Gerbang '),
+          `Ruas ${item.IdCabang}`,
+          item.IdGerbang,
           `0${index + 1}`,
           ['Kamis', 'Rabu', 'Selasa', 'Senin', 'Minggu', 'Sabtu'][index % 6],
-          new Date(item.date).toLocaleDateString('id-ID'),
+          new Date(item.Tanggal).toLocaleDateString('id-ID'),
           paymentMethod,
-          Math.floor(item.totalVehicles * 0.6),
-          Math.floor(item.totalVehicles * 0.4)
+          item.Golongan === 1 ? item.TotalByFilter : 0,
+          item.Golongan === 2 ? item.TotalByFilter : 0,
+          item.Golongan === 3 ? item.TotalByFilter : 0,
+          item.Golongan === 4 ? item.TotalByFilter : 0,
+          item.Golongan === 5 ? item.TotalByFilter : 0,
+          item.TotalByFilter || 0
         ];
         
         cells.forEach(cellText => {
@@ -195,9 +231,9 @@ const ExportButton: React.FC<ExportButtonProps> = ({ data, activeFilter, selecte
       
       // Add summary rows
       const summaryRows = [
-        { label: 'Total Lalin Ruas 1', gol1: '1791', gol2: '7698', className: 'summary' },
-        { label: 'Total Lalin Ruas 2', gol1: '4779', gol2: '7698', className: 'summary' },
-        { label: 'Total Lalin Keseluruhan', gol1: '6570', gol2: '7698', className: 'total' }
+        { label: 'Total Lalin Ruas 1', gol1: '1791', gol2: '7698', gol3: '7698', gol4: '7698', gol5: '7698', total: '6570', className: 'summary' },
+        { label: 'Total Lalin Ruas 2', gol1: '4779', gol2: '7698', gol3: '7698', gol4: '7698', gol5: '7698', total: '6570', className: 'summary' },
+        { label: 'Total Lalin Keseluruhan', gol1: '6570', gol2: '7698', gol3: '7698', gol4: '7698', gol5: '7698', total: '6570', className: 'total' }
       ];
       
       summaryRows.forEach(summaryRow => {
@@ -227,11 +263,13 @@ const ExportButton: React.FC<ExportButtonProps> = ({ data, activeFilter, selecte
       doc.documentElement.appendChild(head);
       doc.documentElement.appendChild(body);
       
-      printWindow.focus();
-      setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-      }, 250);
+      printWindow.onload = () => {
+        setTimeout(() => {
+          printWindow.focus();
+          printWindow.print();
+          printWindow.close();
+        }, 100);
+      };
     }
     
     setIsOpen(false);

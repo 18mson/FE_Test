@@ -42,13 +42,11 @@ const TrafficReportTable: React.FC<TrafficReportTableProps> = ({
 
   const CountfilteredData =(item: TrafficData) => {
     if (activeFilter === 'keseluruhan') {
-      return item.Tunai + item.eFlo + item.eMandiri + item.eBri + item.eBni + item.eBca + item.eNobu + item.eDKI + item.eMega || 0;
+      return item.Tunai + item.DinasOpr + item.DinasMitra + item.DinasKary + item.eFlo + item.eMandiri + item.eBri + item.eBni + item.eBca + item.eNobu + item.eDKI + item.eMega || 0;
     } else if (activeFilter === 'tunai') {
       return item.Tunai || 0;
     } else if (activeFilter === 'etoll') {
       return item.eMandiri + item.eBri + item.eBni + item.eBca + item.eNobu + item.eDKI + item.eMega || 0;
-    } else if (activeFilter === 'ktp') {
-      return item.ktp || 0;
     } else if (activeFilter === 'eFlo') {
       return item.eFlo || 0;
     } else if (activeFilter === 'etoll-tunai-flo') {
@@ -125,7 +123,7 @@ const TrafficReportTable: React.FC<TrafficReportTableProps> = ({
                 {format(new Date(item.Tanggal), 'dd-MM-yyyy')}
               </td>
               <td className="px-4 py-3 text-sm text-gray-900 border-r border-gray-200">
-                {item.paymentMethod}
+                {activeFilter}
               </td>
               <td className="px-4 py-3 text-sm text-gray-900 text-center border-r border-gray-200">
                 {item.Golongan === 1 ? CountfilteredData(item) : 0}

@@ -36,7 +36,6 @@ export interface TrafficData {
   eDKI: number;
   eMega: number;
   eFlo: number;
-  ktp: number;
 }
 
 export interface DashboardStats {

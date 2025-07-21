@@ -43,12 +43,14 @@ export const createGate = (data: any) => {
   return api.post('/gerbangs', data);
 };
 
-export const updateGate = (id: number, data: any) => {
-  return api.put(`/gerbangs/${id}`, data);
+export const updateGate = (data: any) => {
+  return api.put(`/gerbangs`, data);
 };
 
-export const deleteGate = (id: number) => {
-  return api.delete(`/gerbangs/${id}`);
+export const deleteGate = (id: number, IdCabang: number) => {
+  return api.delete(`/gerbangs`, {
+    data: { id, IdCabang },
+  });
 };
 
 

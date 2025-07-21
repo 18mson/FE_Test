@@ -51,7 +51,7 @@ const GateModal: React.FC<GateModalProps> = ({ isOpen, onClose, onSave, gate, mo
       if (mode === 'create') {
         await createGate(formData);
       } else if (mode === 'edit' && gate) {
-        await updateGate(gate.id, formData);
+        await updateGate(formData);
       }
       onSave();
     } catch (error) {
@@ -65,7 +65,7 @@ const GateModal: React.FC<GateModalProps> = ({ isOpen, onClose, onSave, gate, mo
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50" onClick={onClose}>
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900">
@@ -157,9 +157,9 @@ const GateModal: React.FC<GateModalProps> = ({ isOpen, onClose, onSave, gate, mo
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 cursor-pointer"
               >
-                {isLoading ? 'Saving...' : mode === 'create' ? 'Create Gate' : 'Update Gate'}
+                {isLoading ? 'Saving...' : mode === 'create' ? 'Buat Gerbang' : 'Update Gerbang'}
               </button>
             )}
           </div>

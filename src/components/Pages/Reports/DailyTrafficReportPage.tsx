@@ -6,6 +6,7 @@ import FilterSection from './FilterSection';
 import TrafficReportTable from './TrafficTable';
 import TablePagination from '../../common/TablePagination';
 import ExportButton from './ExportButton';
+import PopupInformation from '../../common/PopupInformation';
 
 const DailyTrafficReportPage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
@@ -16,6 +17,7 @@ const DailyTrafficReportPage: React.FC = () => {
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>('keseluruhan');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchTrafficData();
@@ -34,7 +36,7 @@ const DailyTrafficReportPage: React.FC = () => {
       setTotal(data.data.rows.count);
 
     } catch (error) {
-      console.error('Error fetching traffic data:', error);
+      setError(error instanceof Error ? error.message : 'Gagal mengambil data lalu lintas');
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +60,6 @@ const DailyTrafficReportPage: React.FC = () => {
   };
 
   const totalPages = Math.ceil(total / itemsPerPage);
-  console.log(totalPages);
 
   const renderButtonHeader = (label: string, filterType: string) => (
     <button
@@ -82,7 +83,6 @@ const DailyTrafficReportPage: React.FC = () => {
         />
       </div>
 
-      {/* Filters */}
       <FilterSection
         searchTerm={searchTerm}
         selectedDate={selectedDate}
@@ -92,7 +92,6 @@ const DailyTrafficReportPage: React.FC = () => {
         onReset={handleReset}
       />
 
-      {/* Data Table */}
       <div className="bg-white rounded-lg shadow-sm">
         <div className="grid grid-cols-6 gap-0 border-b border-gray-200">
           {renderButtonHeader('Total Tunai', 'tunai')}
@@ -122,6 +121,8 @@ const DailyTrafficReportPage: React.FC = () => {
           onSetItemsPerPage={setItemsPerPage}
           entriesPerPage={itemsPerPage}
         />
+
+        <PopupInformation isOpen={!!error} onClose={() => setError(null)} message={error} title='Error' />
       </div>
     </div>
   );
