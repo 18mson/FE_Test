@@ -77,51 +77,33 @@ const DashboardPage: React.FC = () => {
         return acc;
     }, {} as { [key: string]: number });
 
-
+    
     return { paymentMethodData, gateData, shiftData, segmentData };
   };
 
-  useEffect(() => {
-    const fetchAndProcessData = async () => {
-      setIsLoading(true);
-      try {
-        const { data } = await getTrafficData({
-          tanggal: selectedDate,
-          search: '',
-          limit: 10000,
-          page: 1,
-        });
-        const processed = processDataForCharts(data.data.rows.rows);
-        setProcessedData(processed);
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchAndProcessData = async () => {
+    setIsLoading(true);
+    try {
+      const { data } = await getTrafficData({
+        tanggal: selectedDate,
+        search: '',
+        limit: 10000,
+        page: 1,
+      });
+      const processed = processDataForCharts(data.data.rows.rows);
+      setProcessedData(processed);
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchAndProcessData();
   }, []);
 
   const handleFilter = () => {
-    const fetchAndProcessData = async () => {
-      setIsLoading(true);
-      try {
-        const { data } = await getTrafficData({
-          tanggal: selectedDate,
-          search: '',
-          limit: 10000,
-          page: 1,
-        });
-        const processed = processDataForCharts(data.data.rows.rows);
-        setProcessedData(processed);
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchAndProcessData();
   };
 
@@ -227,7 +209,6 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  // Mock data for charts to match the design
   const paymentMethodChartData = {
     labels: processedData?.paymentMethodData ? Object.keys(processedData.paymentMethodData) : [],
     datasets: [

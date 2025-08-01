@@ -65,7 +65,7 @@ const GateModal: React.FC<GateModalProps> = ({ isOpen, onClose, onSave, gate, mo
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900">
@@ -73,7 +73,7 @@ const GateModal: React.FC<GateModalProps> = ({ isOpen, onClose, onSave, gate, mo
           </h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+            className="text-gray-400 hover:text-gray-600 transition-colors duration-20 cursor-pointer"
           >
             <X className="h-5 w-5" />
           </button>
@@ -149,7 +149,7 @@ const GateModal: React.FC<GateModalProps> = ({ isOpen, onClose, onSave, gate, mo
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
             >
               {mode === 'view' ? 'Close' : 'Cancel'}
             </button>
